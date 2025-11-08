@@ -10,19 +10,13 @@ type conversions, and some feature engineering.
 """
 
 from __future__ import annotations
+from pathlib import Path
+from src.extract import load_csv
 import pandas as pd
 import numpy as np
-from pathlib import Path
 
-RAW_DATA_PATH = Path(r"C:\Users\Ross\Desktop\Data Analytics Proj\AirbnbProject\data\raw\listings.csv")
-
-
-def load_data(file_path: str | Path) -> pd.DataFrame:
-    """Load the Airbnb listings CSV file into a DataFrame."""
-    df = pd.read_csv(file_path)
-    print(f"✅ Loaded {len(df):,} rows from {file_path}")
-    return df
-
+project_root = Path(__file__).resolve().parents[1]
+listings_file = project_root / "data" / "raw" / "listings.csv"
 
 def drop_missing_columns(df: pd.DataFrame, threshold: float = 0.4) -> pd.DataFrame:
     """
@@ -126,7 +120,7 @@ def convert_column_types(
     return df
 
 
-def clean_airbnb_data(file_path: str | Path) -> pd.DataFrame:
+def clean_airbnb_data() -> pd.DataFrame:
     """
     Full Airbnb data cleaning pipeline.
 
@@ -138,7 +132,8 @@ def clean_airbnb_data(file_path: str | Path) -> pd.DataFrame:
         5. Convert percentage columns
         6. Apply dtype conversions
     """
-    df = load_data(file_path)
+
+    df = load_csv('listings.csv', 'raw')
     df = drop_missing_columns(df)
     df = normalize_text_columns(df)
     df = clean_bathroom_info(df)
@@ -164,10 +159,11 @@ def clean_airbnb_data(file_path: str | Path) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    cleaned_df = clean_airbnb_data(RAW_DATA_PATH)
 
-    # Optional: save cleaned data
-    output_path = RAW_DATA_PATH.parent.parent / "processed" / "listings_cleaned.csv"
+    cleaned_df = clean_airbnb_data()
+
+    # Save cleaned data
+    output_path = listings_file.parent.parent / "processed" / "listings_cleaned.csv"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     cleaned_df.to_csv(output_path, index=False)
     print(f"Cleaned data saved to: {output_path}")
