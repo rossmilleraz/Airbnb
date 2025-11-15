@@ -2,8 +2,8 @@
 Airbnb listings data cleaning module.
 
 This script loads raw Airbnb listing data, performs column cleaning,
-type conversions, and feature engineering to produce a standardized
-clean dataset for downstream analysis or modeling.
+type conversions, and some feature engineering to produce a standardized
+clean dataset
 """
 
 from __future__ import annotations
@@ -12,10 +12,6 @@ import pandas as pd
 import numpy as np
 from src.extract import load_csv
 
-
-# ------------------------------------------------------------
-# Core cleaning functions
-# ------------------------------------------------------------
 
 def drop_missing_columns(df: pd.DataFrame, threshold: float = 0.4) -> pd.DataFrame:
     """
@@ -82,26 +78,26 @@ def clean_bathroom_info(df: pd.DataFrame) -> pd.DataFrame:
 
 def convert_percent_columns(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     """
-    Convert percentage strings (e.g., '85%') into decimal numeric format (e.g., 0.85).
+    Convert percentage strings into decimal numeric format
     """
     for col in cols:
         if col in df.columns:
             df[col] = (
-                df[col]
-                .astype(str)
-                .str.replace("%", "", regex=False)
-                .replace("nan", np.nan)
-                .astype(float) / 100
+                    df[col]
+                    .astype(str)
+                    .str.replace("%", "", regex=False)
+                    .replace("nan", np.nan)
+                    .astype(float) / 100
             )
     return df
 
 
 def convert_column_types(
-    df: pd.DataFrame,
-    date_cols: list[str],
-    numeric_cols: list[str],
-    bool_cols: list[str],
-    str_cols: list[str],
+        df: pd.DataFrame,
+        date_cols: list[str],
+        numeric_cols: list[str],
+        bool_cols: list[str],
+        str_cols: list[str],
 ) -> pd.DataFrame:
     """
     Convert columns to proper pandas data types for consistency.
@@ -137,16 +133,12 @@ def convert_column_types(
     return df
 
 
-# ------------------------------------------------------------
-# Tracking and column management
-# ------------------------------------------------------------
-
 def keep_selected_columns(
-    df: pd.DataFrame,
-    date_cols: list[str],
-    numeric_cols: list[str],
-    bool_cols: list[str],
-    str_cols: list[str]
+        df: pd.DataFrame,
+        date_cols: list[str],
+        numeric_cols: list[str],
+        bool_cols: list[str],
+        str_cols: list[str]
 ) -> pd.DataFrame:
     """
     Keep only selected columns and log which ones were dropped.
@@ -155,11 +147,11 @@ def keep_selected_columns(
     existing_cols = [col for col in keep_cols if col in df.columns]
     removed_cols = [col for col in df.columns if col not in existing_cols]
 
-    print(f"\n🧹 Keeping {len(existing_cols)} columns:")
+    print(f"\nKeeping {len(existing_cols)} columns:")
     for col in existing_cols:
         print(f"  - {col}")
 
-    print(f"\n🗑️ Dropping {len(removed_cols)} columns not in keep lists:")
+    print(f"\nDropping {len(removed_cols)} columns not in keep lists:")
     for col in removed_cols:
         print(f"  - {col}")
 
@@ -173,22 +165,17 @@ def keep_selected_columns(
     return df[existing_cols]
 
 
-# ------------------------------------------------------------
-# Full cleaning pipeline
-# ------------------------------------------------------------
-
 def clean_airbnb_data() -> pd.DataFrame:
     """
     Full Airbnb data cleaning pipeline.
 
     Steps:
         1. Load CSV
-        2. Drop high-missing columns
+        2. Drop columns with a lot of missing data
         3. Normalize text
-        4. Clean bathroom fields
+        4. Fix bathroom fields
         5. Convert percentage columns
         6. Apply dtype conversions
-        7. Keep only relevant columns
     """
     df = load_csv('listings.csv', 'raw')
     df = drop_missing_columns(df)
@@ -217,10 +204,6 @@ def clean_airbnb_data() -> pd.DataFrame:
     return df
 
 
-# ------------------------------------------------------------
-# Script entry point
-# ------------------------------------------------------------
-
 if __name__ == "__main__":
     project_root = Path(__file__).resolve().parents[1]
     listings_file = project_root / "data" / "raw" / "listings.csv"
@@ -233,4 +216,4 @@ if __name__ == "__main__":
     output_path.parent.mkdir(parents=True, exist_ok=True)
     cleaned_df.to_csv(output_path, index=False)
 
-    print(f"\n✅ Cleaned data saved to: {output_path}")
+    print(f"\nCleaned data saved to: {output_path}")
