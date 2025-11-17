@@ -1,0 +1,55 @@
+# ------------------------------
+# Python / Environment
+# ------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.egg-info/
+.venv/
+env/
+venv/
+
+# ------------------------------
+# Jupyter Notebooks
+# ------------------------------
+.ipynb_checkpoints/
+
+# ------------------------------
+# Data (Raw & Processed)
+# ------------------------------
+
+# Ignore everything in raw except your main dataset
+data/raw/*
+!data/raw/listings.csv
+
+# Ignore everything processed EXCEPT your cleaned dataset
+data/processed/*
+!data/processed/listings_cleaned.csv
+!data/processed/listings_transformed.csv
+
+# Ignore logs
+logs/
+
+# ------------------------------
+# Models
+# ------------------------------
+models/*
+!models/random_forest_review_model.pkl
+!models/feature_columns.json
+
+# ------------------------------
+# OS / Editor Files
+# ------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# ------------------------------
+# Reports (images, HTML, exports)
+# ------------------------------
+reports/*.html
+reports/*.pdf
+reports/*.png
